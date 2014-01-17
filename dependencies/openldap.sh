@@ -1,4 +1,12 @@
 : ${OPENLDAP_DEPENDENCIES:=openssl zlib cyrus_sasl}
+: ${OPENLDAP_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --disable-slapd
+    --with-cyrus-sasl
+    --with-tls=openssl
+  }
+: ${OPENLDAP_TARBALL:="openldap-2.4.36.tgz"}
+: ${OPENLDAP_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/openldap.h"}
 
 #-------------------------------------------------------------------------------
 install_openldap()
@@ -20,25 +28,19 @@ install_openldap()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/ldap.h" ]; then
-      mkdir -p "openldap"  || exit 1
-      cd "openldap/"    || exit 1
+  if [ ! -f "${OPENLDAP_INSTALLED_FILE}" ]; then
+      rm -rf "./openldap"                           || fail "Unable to create application workspace"
+      mkdir -p "openldap"                           || fail "Unable to create application workspace"
+      cd "openldap/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/openldap-2.4.36.tgz" || exit 1
-      cd "openldap-2.4.36/" || exit 1
+      download_tarball "${OPENLDAP_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${OPENLDAP_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${OPENLDAP_TARBALL%.tgz})"     || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-              --disable-slapd \
-              --with-cyrus-sasl \
-              --with-tls=openssl \
-          \
-          || exit 1
+      ./configure ${OPENLDAP_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                         || fail "An error occurred during application compilation"
+      make -j${parallelism} install                 || fail "An error occurred during application installation"
   else
       info "[SKIP] openldap is already installed"
   fi
