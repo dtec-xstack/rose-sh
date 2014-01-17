@@ -1,4 +1,13 @@
 : ${DB_DEPENDENCIES:=}
+: ${DB_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --enable-compat185
+    --enable-cxx
+  }
+: ${DB_TARBALL:="db-4.8.30.tar.gz"}
+: ${DB_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/db.h"}
 
 #-------------------------------------------------------------------------------
 install_db()
@@ -20,28 +29,21 @@ install_db()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/db.h" ]; then
-      mkdir -p "db"  || exit 1
-      cd "db/"    || exit 1
+  if [ ! -f "${DB_INSTALLED_FILE}" ]; then
+      rm -rf "./db"                           || fail "Unable to create application workspace"
+      mkdir "db"                              || fail "Unable to create application workspace"
+      cd "db/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/db-4.8.30.tar.gz" || exit 1
-      cd "db-4.8.30/" || exit 1
+      download_tarball "${DB_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${DB_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${DB_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      mkdir -p "build_unix" || exit 1
-      cd "build_unix/" || exit 1
-
+      cd "build_unix"                         || fail "Unable to change in application build directory"
       ../dist/configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --exec-prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-              --enable-compat185 \
-              --enable-cxx \
-          \
-          || exit 1
+          ${DB_CONFIGURE_OPTIONS}             || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                   || fail "An error occurred during application compilation"
+      make -j${parallelism} install           || fail "An error occurred during application installation"
   else
       info "[SKIP] db is already installed"
   fi

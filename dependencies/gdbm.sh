@@ -26,6 +26,7 @@ install_gdbm()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${GDBM_INSTALLED_FILE}" ]; then
+      rm -rf "./gdbm"                           || fail "Unable to create application workspace"
       mkdir -p "gdbm"                           || fail "Unable to create application workspace"
       cd "gdbm/"                                || fail "Unable to change into the application workspace"
 

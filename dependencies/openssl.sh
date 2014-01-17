@@ -27,6 +27,7 @@ install_openssl()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${OPENSSL_INSTALLED_FILE}" ]; then
+      rm -rf "./openssl"                            || fail "Unable to create application workspace"
       mkdir -p "openssl"                            || fail "Unable to create application workspace"
       cd "openssl/"                                 || fail "Unable to change into the application workspace"
 

@@ -27,6 +27,7 @@ install_zlib()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${ZLIB_INSTALLED_FILE}" ]; then
+      rm -rf "./zlib"                           || fail "Unable to create application workspace"
       mkdir -p "zlib"                           || fail "Unable to create application workspace"
       cd "zlib/"                                || fail "Unable to change into the application workspace"
 
