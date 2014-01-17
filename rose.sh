@@ -184,14 +184,14 @@ main()
           phase_1 || exit 1
 
       ) 2>&1 | while read; do echo "[Phase 1] ${REPLY}"; done
-      [ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during Phase 1 of ${application}" || true
+      [ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during Phase 1 of '${application}'" || true
 
       (
 
           phase_2 || exit 1
 
       ) 2>&1 | while read; do echo "[Phase 2] ${REPLY}"; done
-      [ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during Phase 2 of ${application}" || true
+      [ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during Phase 2 of '${application}'" || true
 
     popd
 }
@@ -216,7 +216,16 @@ pushd "${application_workspace}"    || fail "main::cd_into_workspace failed"
     main || fail "Main program execution failed"
 
 )  2>&1 | while read; do echo "[INFO] [$(date +%Y%m%d-%H:%M:%S)] [${application}] ${REPLY}"; done | tee "${application_log}"
-[ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during execution of '${application}' tests. See log output: '${application_log}'" || true
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+  info ""
+  info "-------------------------------------------------------------------------------"
+  info "Failed during execution of '${application}' tests. See log output: '${application_log}'"
+  info ""
+  cat "${application_log}" | grep "FATAL" | sed 's/\[INFO\]/[BACKTRACE]/g'
+  info ""
+  fail "Terminated with failure."
+  exit 1
+fi
 
 info "-------------------------------------------------------------------------------"
 info "SUCCESS"
