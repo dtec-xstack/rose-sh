@@ -1,4 +1,11 @@
 : ${LIBGCRYPT_DEPENDENCIES:=libgpg_error}
+: ${LIBGCRYPT_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --enable-static
+  }
+: ${LIBGCRYPT_TARBALL:="libgcrypt-1.5.3.tar.gz"}
+: ${LIBGCRYPT_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/gcrypt.h"}
 
 #-------------------------------------------------------------------------------
 install_libgcrypt()
@@ -20,23 +27,19 @@ install_libgcrypt()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/gcrypt.h" ]; then
-      mkdir -p "libgcrypt"  || exit 1
-      cd "libgcrypt/"    || exit 1
+  if [ ! -f "${LIBGCRYPT_INSTALLED_FILE}" ]; then
+      rm -rf "./libgcrypt"                           || fail "Unable to create application workspace"
+      mkdir -p "libgcrypt"                           || fail "Unable to create application workspace"
+      cd "libgcrypt/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/libgcrypt-1.5.3.tar.gz" || exit 1
-      cd "libgcrypt-1.5.3/" || exit 1
+      download_tarball "${LIBGCRYPT_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBGCRYPT_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBGCRYPT_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-              --enable-static \
-          \
-          || exit 1
+      ./configure ${LIBGCRYPT_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libgcrypt is already installed"
   fi
