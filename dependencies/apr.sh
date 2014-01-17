@@ -1,4 +1,10 @@
 : ${APR_DEPENDENCIES:=}
+: ${APR_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+  }
+: ${APR_TARBALL:="apr-1.4.8.tar.gz"}
+: ${APR_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/apr-1/apr.h"}
 
 #-------------------------------------------------------------------------------
 install_apr()
@@ -20,19 +26,19 @@ install_apr()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/apr-1/apr.h" ]; then
-      mkdir -p "apr"  || exit 1
-      cd "apr/"    || exit 1
+  if [ ! -f "${APR_INSTALLED_FILE}" ]; then
+      rm -rf "./apr"                           || fail "Unable to create application workspace"
+      mkdir -p "apr"                           || fail "Unable to create application workspace"
+      cd "apr/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/apr-1.4.8.tar.gz" || exit 1
-      cd "apr-1.4.8/" || exit 1
+      download_tarball "${APR_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${APR_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${APR_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" || exit 1
+      ./configure ${APR_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] apr is already installed"
   fi
