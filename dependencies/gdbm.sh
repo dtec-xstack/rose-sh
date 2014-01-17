@@ -1,7 +1,7 @@
 : ${GDBM_DEPENDENCIES:=}
 : ${GDBM_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
-    --libdir="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_PREFIX}/lib"
   }
 : ${GDBM_TARBALL:="gdbm-1.10.tar.gz"}
 : ${GDBM_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/gdbm.h"}

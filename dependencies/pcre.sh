@@ -2,7 +2,7 @@
 : ${PCRE_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
-    --libdir="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_PREFIX}/lib"
     --enable-unicode-properties
     --enable-utf
     --enable-pcregrep-libz

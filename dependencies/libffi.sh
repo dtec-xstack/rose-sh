@@ -2,7 +2,7 @@
 : ${LIBFFI_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
-    --libdir="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_PREFIX}/lib"
   }
 : ${LIBFFI_TARBALL:="libffi-3.0.13.tar.gz"}
 : ${LIBFFI_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/lib/libffi-3.0.13/include/ffi.h"}
