@@ -1,4 +1,10 @@
 : ${EXPAT_DEPENDENCIES:=}
+: ${EXPAT_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+  }
+: ${EXPAT_TARBALL:="expat-2.1.0.tar.gz"}
+: ${EXPAT_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/expat.h"}
 
 #-------------------------------------------------------------------------------
 install_expat()
@@ -20,19 +26,19 @@ install_expat()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/expat.h" ]; then
-      mkdir -p "expat"  || exit 1
-      cd "expat/"    || exit 1
+  if [ ! -f "${EXPAT_INSTALLED_FILE}" ]; then
+      rm -rf "./expat"                           || fail "Unable to create application workspace"
+      mkdir -p "expat"                           || fail "Unable to create application workspace"
+      cd "expat/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/expat-2.1.0.tar.gz" || exit 1
-      cd "expat-2.1.0/" || exit 1
+      download_tarball "${EXPAT_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${EXPAT_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${EXPAT_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" || exit 1
+      ./configure ${EXPAT_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] expat is already installed"
   fi
