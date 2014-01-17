@@ -9,8 +9,7 @@
     --enable-static
     --with-pcre=system
   }
-: ${GLIB_TARBALL:="${DEPENDENCIES_DIR}/glib-2.38.0.tar.xz"}
-: ${GLIB_SOURCE_DIRNAME:="glib-2.38.0"}
+: ${GLIB_TARBALL:="glib-2.38.0.tar.xz"}
 : ${GLIB_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/glib-2.0/glib.h"}
 
 #-------------------------------------------------------------------------------
@@ -34,12 +33,14 @@ install_glib()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${GLIB_INSTALLED_FILE}" ]; then
+      rm -rf "./glib"  || fail "Unable to delete old application workspace"
       mkdir -p "glib"  || fail "Unable to create application workspace"
       cd "glib/"       || fail "Unable to change into the application workspace"
 
-      unxz "${GLIB_TARBALL}"        || fail "Unable to unpack application tarball"
-      tar xvf "${GLIB_TARBALL%.xz}" || fail "Unable to unpack application tarball"
-      cd "${GLIB_SOURCE_DIRNAME}"   || fail "Unable to change into application source directory"
+      download_tarball "${GLIB_TARBALL}"    || fail "Unable to download application tarball"
+      unxz "${GLIB_TARBALL}"                || fail "Unable to unpack application tarball"
+      tar xvf "${GLIB_TARBALL%.xz}"         || fail "Unable to unpack application tarball"
+      cd "${GLIB_TARBALL%.tar.xz}"          || fail "Unable to change into application source directory"
 
       ./configure ${GLIB_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 
