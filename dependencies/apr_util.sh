@@ -1,4 +1,17 @@
+# TODO: db4?
 : ${APR_UTIL_DEPENDENCIES:=expat apr gdbm openssl}
+: ${APR_UTIL_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --with-apr="$ROSE_SH_DEPS_PREFIX"
+    --with-openssl="$ROSE_SH_DEPS_PREFIX"
+    --with-expat="$ROSE_SH_DEPS_PREFIX"
+    --with-dbm=db
+    --with-berkeley-db="$ROSE_SH_DEPS_PREFIX"
+    --with-crypto
+  }
+: ${APR_UTIL_TARBALL:="apr-util-1.5.2.tar.gz"}
+: ${APR_UTIL_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/lib/aprutil.exp"}
 
 #-------------------------------------------------------------------------------
 install_apr_util()
@@ -20,28 +33,19 @@ install_apr_util()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/lib/aprutil.exp" ]; then
-      mkdir -p "apr_util"  || exit 1
-      cd "apr_util/"    || exit 1
+  if [ ! -f "${APR_UTIL_INSTALLED_FILE}" ]; then
+      rm -rf "./apr_util"                           || fail "Unable to create application workspace"
+      mkdir -p "apr_util"                           || fail "Unable to create application workspace"
+      cd "apr_util/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/apr-util-1.5.2.tar.gz" || exit 1
-      cd "apr-util-1.5.2/" || exit 1
+      download_tarball "${APR_UTIL_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${APR_UTIL_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${APR_UTIL_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-              --with-apr="${ROSE_SH_DEPS_PREFIX}" \
-              --with-openssl="${ROSE_SH_DEPS_PREFIX}" \
-              --with-expat="${ROSE_SH_DEPS_PREFIX}" \
-              --with-dbm=db \
-              --with-berkeley-db="${ROSE_SH_DEPS_PREFIX}" \
-              --with-crypto \
-          \
-          || exit 1
+      ./configure ${APR_UTIL_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] apr_util is already installed"
   fi
