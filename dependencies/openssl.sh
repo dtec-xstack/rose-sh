@@ -1,4 +1,10 @@
 : ${OPENSSL_DEPENDENCIES:=zlib}
+: ${OPENSSL_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    shared
+  }
+: ${OPENSSL_TARBALL:="openssl-1.0.1e.tar.gz"}
+: ${OPENSSL_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/openssl/opensslconf.h"}
 
 #-------------------------------------------------------------------------------
 install_openssl()
@@ -20,21 +26,21 @@ install_openssl()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/openssl/opensslconf.h" ]; then
-      mkdir -p "openssl" || exit 1
-      cd "openssl/"   || exit 1
+  if [ ! -f "${OPENSSL_INSTALLED_FILE}" ]; then
+      mkdir -p "openssl"                            || fail "Unable to create application workspace"
+      cd "openssl/"                                 || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/openssl-1.0.1e.tar.gz" || exit 1
-      cd "openssl-1.0.1e/" || exit 1
+      download_tarball "${OPENSSL_TARBALL}"         || fail "Unable to download application tarball"
+      tar xzvf "${OPENSSL_TARBALL}"                 || fail "Unable to unpack application tarball"
+      cd "$(basename ${OPENSSL_TARBALL%.tar.gz})"   || fail "Unable to change into application source directory"
 
-      CC="${CC} ${LDFLAGS}" \
-          ./config \
-              --prefix="$ROSE_SH_DEPS_PREFIX" \
-              --libdir="$ROSE_SH_DEPS_LIBDIR" \
-              shared || exit 1
+      CC="gcc ${LDFLAGS}" \
+          ./config        \
+              ${OPENSSL_CONFIGURE_OPTIONS}          || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      # Fails with parallel build
+      make -j1                                      || fail "An error occurred during application compilation"
+      make -j1 install                              || fail "An error occurred during application installation"
   else
       info "[SKIP] openssl is already installed"
   fi
