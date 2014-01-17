@@ -9,8 +9,8 @@
     --enable-pcregrep-libbz2
     --enable-pcretest-libreadline
   }
-: ${PCRE_TARBALL:="${DEPENDENCIES_DIR}/pcre-8.31.tar.gz"}
-: ${PCRE_SOURCE_DIRNAME:="pcre-8.31"}
+: ${PCRE_TARBALL:="pcre-8.31.tar.gz"}
+: ${PCRE_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/pcre.h"}
 
 #-------------------------------------------------------------------------------
 install_pcre()
@@ -32,12 +32,14 @@ install_pcre()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/pcre.h" ]; then
+  if [ ! -f "${PCRE_INSTALLED_FILE}" ]; then
+      rm -rf "./pcre"  || fail "Unable to create application workspace"
       mkdir -p "pcre"  || fail "Unable to create application workspace"
       cd "pcre/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${PCRE_TARBALL}"    || fail "Unable to unpack application tarball"
-      cd "${PCRE_SOURCE_DIRNAME}"   || fail "Unable to change into application source directory"
+      download_tarball "${PCRE_TARBALL}"        || fail "Unable to unpack application tarball"
+      tar xzvf "${PCRE_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${PCRE_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       ./configure ${PCRE_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 

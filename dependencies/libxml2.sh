@@ -1,4 +1,14 @@
 : ${LIBXML2_DEPENDENCIES:=zlib readline}
+: ${LIBXML2_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --with-libxml2="$ROSE_SH_DEPS_PREFIX"
+    --without-lzma
+    --with-readline="$ROSE_SH_DEPS_PREFIX"
+    --without-python
+  }
+: ${LIBXML2_TARBALL:="libxml2-2.9.1.tar.gz"}
+: ${LIBXML2_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/libxml2/libxml/xmlschemas.h"}
 
 #-------------------------------------------------------------------------------
 install_libxml2()
@@ -20,26 +30,19 @@ install_libxml2()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/libxml2/libxml/xmlschemas.h" ]; then
-      mkdir -p "libxml2"  || exit 1
-      cd "libxml2/"    || exit 1
+  if [ ! -f "${LIBXML2_INSTALLED_FILE}" ]; then
+      rm -rf "./libxml2"                           || fail "Unable to create application workspace"
+      mkdir -p "libxml2"                           || fail "Unable to create application workspace"
+      cd "libxml2/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/libxml2-2.9.1.tar.gz" || exit 1
-      cd "libxml2-2.9.1/" || exit 1
+      download_tarball "${LIBXML2_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBXML2_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBXML2_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-              --with-zlib="${ROSE_SH_DEPS_PREFIX}" \
-              --without-lzma \
-              --with-readline="${ROSE_SH_DEPS_PREFIX}" \
-              --without-python \
-          \
-          || exit 1
+      ./configure ${LIBXML2_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libxml2 is already installed"
   fi
