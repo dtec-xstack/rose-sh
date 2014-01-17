@@ -1,7 +1,28 @@
-: ${NCURSES_DEPENDENCIES:=}
+: ${ZLIB_DEPENDENCIES:=}
+: ${ZLIB_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --enable-pc-files
+    --enable-overwrite
+    --with-shared
+    --with-termlib=tinfo
+    --enable-rpath
+    --disable-termcap
+    --enable-symlinks
+    --with-ticlib=tic
+    --without-ada
+    --without-tests
+    --without-profile
+    --without-debug
+    --enable-echo
+    --without-progs
+  }
+: ${ZLIB_TARBALL:="ncurses-5.9.tar.gz"}
+: ${ZLIB_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/zlib.h"}
 
 #-------------------------------------------------------------------------------
-install_ncurses()
+install_zlib()
 #-------------------------------------------------------------------------------
 {
   info "Installing application"
@@ -13,51 +34,36 @@ install_ncurses()
   #-----------------------------------------------------------------------------
   # Dependencies
   #-----------------------------------------------------------------------------
-  install_deps ${NCURSES_DEPENDENCIES} || exit 1
+  install_deps ${ZLIB_DEPENDENCIES} || exit 1
 
   #-----------------------------------------------------------------------------
   # Installation
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/ncurses.h" ]; then
-      mkdir -p "ncurses"  || exit 1
-      cd "ncurses/"    || exit 1
+  if [ ! -f "${ZLIB_INSTALLED_FILE}" ]; then
+      rm -rf "./zlib"                           || fail "Unable to create application workspace"
+      mkdir -p "zlib"                           || fail "Unable to create application workspace"
+      cd "zlib/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/ncurses-5.9.tar.gz" || exit 1
-      cd "ncurses-5.9/" || exit 1
+      download_tarball "${ZLIB_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${ZLIB_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${ZLIB_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-          --enable-pc-files \
-          --enable-overwrite \
-          --with-shared \
-          --with-termlib=tinfo \
-          --enable-rpath \
-          --disable-termcap \
-          --enable-symlinks \
-          --with-ticlib=tic \
-          --without-ada \
-          --without-tests \
-          --without-profile \
-          --without-debug \
-          --enable-echo \
-          --without-progs || exit 1
+      ./configure ${ZLIB_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
 
       ln -s \
           "${ROSE_SH_DEPS_PREFIX}/lib/libncurses.so" \
-          "${ROSE_SH_DEPS_PREFIX}/lib/libtermcap.so"   || exit 1
+          "${ROSE_SH_DEPS_PREFIX}/lib/libtermcap.so"   || fail "Could not create symbolic link"
 
       ln -s \
           "${ROSE_SH_DEPS_PREFIX}/lib/libncurses.so" \
-          "${ROSE_SH_DEPS_PREFIX}/lib/libtermcap.so.2" || exit 1
+          "${ROSE_SH_DEPS_PREFIX}/lib/libtermcap.so.2" || fail "Could not create symbolic link"
   else
-      info "[SKIP] ncurses is already installed"
+      info "[SKIP] zlib is already installed"
   fi
   #-----------------------------------------------------------------------------
   set +x

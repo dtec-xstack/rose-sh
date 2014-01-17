@@ -1,4 +1,10 @@
 : ${BZIP2_DEPENDENCIES:=}
+: ${BZIP2_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+  }
+: ${BZIP2_TARBALL:="bzip2-1.0.6.tar.gz"}
+: ${BZIP2_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/bzlib.h"}
 
 #-------------------------------------------------------------------------------
 install_bzip2()
@@ -20,19 +26,22 @@ install_bzip2()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/bzlib.h" ]; then
-      mkdir -p "bzip2"  || exit 1
-      cd "bzip2/"    || exit 1
+  if [ ! -f "${BZIP2_INSTALLED_FILE}" ]; then
+      rm -rf "./bzip2"                            || fail "Unable to create application workspace"
+      mkdir -p "bzip2"                            || fail "Unable to create application workspace"
+      cd "bzip2/"                                 || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/bzip2-1.0.6.tar.gz" || exit 1
-      cd "bzip2-1.0.6/" || exit 1
+      download_tarball "${BZIP2_TARBALL}"         || fail "Unable to download application tarball"
+      tar xzvf "${BZIP2_TARBALL}"                 || fail "Unable to unpack application tarball"
+      cd "$(basename ${BZIP2_TARBALL%.tar.gz})"   || fail "Unable to change into application source directory"
 
       make install \
           -j${parallelism} \
           PREFIX="${ROSE_SH_DEPS_PREFIX}" \
           LDFLAGS="$LDFLAGS" \
           CPPFLAGS="$CFLAGS -fPIC" \
-          LIBDIR="lib64" || exit 1
+          LIBDIR="lib64"                          || fail "An error occurred during application installation"
+
   else
       info "[SKIP] bzip2 is already installed"
   fi
