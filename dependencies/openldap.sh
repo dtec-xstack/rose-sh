@@ -7,7 +7,7 @@
     --with-tls=openssl
   }
 : ${OPENLDAP_TARBALL:="openldap-2.4.36.tgz"}
-: ${OPENLDAP_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/openldap.h"}
+: ${OPENLDAP_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/ldap.h"}
 
 #-------------------------------------------------------------------------------
 install_openldap()
