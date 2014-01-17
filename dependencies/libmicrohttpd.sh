@@ -1,10 +1,13 @@
-: ${LIBMICROHTTPD_DEPENDENCIES:=curl openssl}
+: ${LIBMICROHTTPD_DEPENDENCIES:=}
 : ${LIBMICROHTTPD_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
-    --with-libcurl="${ROSE_SH_DEPS_PREFIX}"
-    --with-openssl="${ROSE_SH_DEPS_PREFIX}"
-    --with-libgcrypt-prefix="${ROSE_SH_DEPS_PREFIX}"}
+    --with-libcurl="$ROSE_SH_DEPS_PREFIX"
+    --with-openssl="$ROSE_SH_DEPS_PREFIX"
+    --with-libgcrypt-prefix="$ROSE_SH_DEPS_PREFIX"
+  }
+: ${LIBMICROHTTPD_TARBALL:="libmicrohttpd-0.9.30.tar.gz"}
+: ${LIBMICROHTTPD_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/microhttpd.h"}
 
 #-------------------------------------------------------------------------------
 install_libmicrohttpd()
@@ -26,17 +29,19 @@ install_libmicrohttpd()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/microhttpd.h" ]; then
-      mkdir -p "libmicrohttpd"  || exit 1
-      cd "libmicrohttpd/"       || exit 1
+  if [ ! -f "${LIBMICROHTTPD_INSTALLED_FILE}" ]; then
+      rm -rf "./libmicrohttpd"                           || fail "Unable to create application workspace"
+      mkdir -p "libmicrohttpd"                           || fail "Unable to create application workspace"
+      cd "libmicrohttpd/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/libmicrohttpd-0.9.30.tar.gz" || fail "Unable to unpack tarball"
-      cd "libmicrohttpd-0.9.30/" || exit 1
+      download_tarball "${LIBMICROHTTPD_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBMICROHTTPD_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBMICROHTTPD_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure ${LIBMICROHTTPD_CONFIGURE_OPTIONS} || fail "Unable to configure"
+      ./configure ${LIBMICROHTTPD_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism}         || fail "An error occurred during compilation"
-      make -j${parallelism} install || fail "An error occurred during installation"
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libmicrohttpd is already installed"
   fi
