@@ -1,4 +1,9 @@
 : ${GDBM_DEPENDENCIES:=}
+: ${GDBM_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+  }
+: ${GDBM_TARBALL:="gdbm-1.10.tar.gz"}
+: ${GDBM_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/gdbm.h"}
 
 #-------------------------------------------------------------------------------
 install_gdbm()
@@ -13,26 +18,25 @@ install_gdbm()
   #-----------------------------------------------------------------------------
   # Dependencies
   #-----------------------------------------------------------------------------
-  install_deps "${GDBM_DEPENDENCIES}" || exit 1
+  install_deps ${GDBM_DEPENDENCIES} || exit 1
 
   #-----------------------------------------------------------------------------
   # Installation
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/gdbm.h" ]; then
-      mkdir -p "gdbm"  || exit 1
-      cd "gdbm/"    || exit 1
+  if [ ! -f "${GDBM_INSTALLED_FILE}" ]; then
+      mkdir -p "gdbm"                           || fail "Unable to create application workspace"
+      cd "gdbm/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/gdbm-1.10.tar.gz" || exit 1
-      cd "gdbm-1.10/" || exit 1
+      download_tarball "${GDBM_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${GDBM_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${GDBM_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" || exit 1
+      ./configure ${GDBM_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] gdbm is already installed"
   fi
