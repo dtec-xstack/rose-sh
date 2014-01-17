@@ -10,6 +10,7 @@ set -e
 : ${parallelism:=1}
 : ${application:=$1}
 : ${application_workspace:="${workspace}/${application}"}
+: ${application_log:="${application_workspace}/output.txt-$$"}
 #-------------------------------------------------------------------------------
 : ${TARBALL_MIRROR_URLS:=
   https://bitbucket.org/rose-compiler/rose-sh/downloads
@@ -178,11 +179,6 @@ main()
         source "${APPLICATION_SCRIPT}" || exit 1
     fi
 
-    # Build in a separate workspace, so we don't pollute the user's current directory.
-    rm -rf "${application_workspace}"   || fail "main::remove_workspace failed"
-    mkdir -p "${application_workspace}" || fail "main::create_workspace failed"
-    pushd "${application_workspace}"    || fail "main::cd_into_workspace failed"
-
       (
 
           phase_1 || exit 1
@@ -200,7 +196,10 @@ main()
     popd
 }
 
-mkdir -p "${application_workspace}" || fail "Could not create application workspace"
+# Build in a separate workspace, so we don't pollute the user's current directory.
+rm -rf "${application_workspace}"   || fail "main::remove_workspace failed"
+mkdir -p "${application_workspace}" || fail "main::create_workspace failed"
+pushd "${application_workspace}"    || fail "main::cd_into_workspace failed"
 
 #-------------------------------------------------------------------------------
 # Entry point for program execution
@@ -216,8 +215,8 @@ mkdir -p "${application_workspace}" || fail "Could not create application worksp
 
     main || fail "Main program execution failed"
 
-)  2>&1 | while read; do echo "[INFO] [$(date +%Y%m%d-%H:%M:%S)] [${application}] ${REPLY}"; done | tee "${application_workspace}/output.txt-$$"
-[ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during execution of '${application}' tests" || true
+)  2>&1 | while read; do echo "[INFO] [$(date +%Y%m%d-%H:%M:%S)] [${application}] ${REPLY}"; done | tee "${application_log}"
+[ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during execution of '${application}' tests. See log output: '${application_log}'" || true
 
 info "-------------------------------------------------------------------------------"
 info "SUCCESS"
