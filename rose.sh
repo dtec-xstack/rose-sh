@@ -79,7 +79,7 @@ install_deps() # $*=dependencies
 # Utilities
 #-------------------------------------------------------------------------------
 info() { printf "[INFO] $*\n" ; return 0 ; }
-fail() { printf "\n[FATAL] $*\n" ; exit 1 ; }
+fail() { printf "\n[FATAL] $*\n" 1>&2 ; exit 1 ; }
 
 download_tarball()
 {
@@ -102,16 +102,6 @@ download_tarball()
 
   fail "Unable to download '${tarball}'"
 }
-
-#-------------------------------------------------------------------------------
-# Source application build function
-#-------------------------------------------------------------------------------
-if [ -z "${APPLICATION_SCRIPT}" -o ! -f "${APPLICATION_SCRIPT}" ]; then
-    fail "Application script does not exist: '${APPLICATION_SCRIPT}'"
-else
-    info "Sourcing application script '${APPLICATION_SCRIPT}'"
-    source "${APPLICATION_SCRIPT}" || exit 1
-fi
 
 #-------------------------------------------------------------------------------
 # Source dependencies install functions
@@ -178,6 +168,16 @@ main()
 {
     info "Performing main()"
 
+    #-------------------------------------------------------------------------------
+    # Source application build function
+    #-------------------------------------------------------------------------------
+    if [ -z "${APPLICATION_SCRIPT}" -o ! -f "${APPLICATION_SCRIPT}" ]; then
+        fail "Application script does not exist: '${APPLICATION_SCRIPT}'"
+    else
+        info "Sourcing application script '${APPLICATION_SCRIPT}'"
+        source "${APPLICATION_SCRIPT}" || exit 1
+    fi
+
     # Build in a separate workspace, so we don't pollute the user's current directory.
     rm -rf "${application_workspace}"   || fail "main::remove_workspace failed"
     mkdir -p "${application_workspace}" || fail "main::create_workspace failed"
@@ -200,15 +200,23 @@ main()
     popd
 }
 
+mkdir -p "${application_workspace}" || fail "Could not create application workspace"
 
 #-------------------------------------------------------------------------------
 # Entry point for program execution
 #-------------------------------------------------------------------------------
 (
 
+    if [ "x$1" = "xinstall-deps" ]; then
+      shift
+      install_deps $* || fail "Could not install deps '$*'"
+      echo "SUCCESS"
+      exit 0
+    fi
+
     main || fail "Main program execution failed"
 
-) 2>&1 | while read; do echo "[$(date +%Y%m%d-%H:%M:%S)] [${application}] ${REPLY}"; done
+)  2>&1 | while read; do echo "[INFO] [$(date +%Y%m%d-%H:%M:%S)] [${application}] ${REPLY}"; done | tee "${application_workspace}/output.txt-$$"
 [ ${PIPESTATUS[0]} -ne 0 ] && fail "Failed during execution of '${application}' tests" || true
 
 info "-------------------------------------------------------------------------------"
