@@ -1,6 +1,7 @@
 : ${OPENLDAP_DEPENDENCIES:=openssl zlib cyrus_sasl}
 : ${OPENLDAP_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_PREFIX}"
     --disable-slapd
     --with-cyrus-sasl
     --with-tls=openssl

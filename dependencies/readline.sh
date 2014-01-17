@@ -1,4 +1,11 @@
-: ${READLINE_DEPENENCIES:=ncurses}
+: ${READLINE_DEPENDENCIES:=ncurses}
+: ${READLINE_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
+    --with-curses
+  }
+: ${READLINE_TARBALL:="readline-6.2.tar.gz"}
+: ${READLINE_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/readline/readline.h"}
 
 #-------------------------------------------------------------------------------
 install_readline()
@@ -13,28 +20,26 @@ install_readline()
   #-----------------------------------------------------------------------------
   # Dependencies
   #-----------------------------------------------------------------------------
-  install_deps ${READLINE_DEPENENCIES} || exit 1
+  install_deps ${READLINE_DEPENDENCIES} || exit 1
 
   #-----------------------------------------------------------------------------
   # Installation
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/readline/readline.h" ]; then
-      mkdir -p "readline"  || exit 1
-      cd "readline/"    || exit 1
+  if [ ! -f "${READLINE_INSTALLED_FILE}" ]; then
+      rm -rf "./readline"                           || fail "Unable to create application workspace"
+      mkdir -p "readline"                           || fail "Unable to create application workspace"
+      cd "readline/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/readline-6.2.tar.gz" || exit 1
-      cd "readline-6.2/" || exit 1
+      download_tarball "${READLINE_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${READLINE_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${READLINE_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --exec-prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          --with-curses || exit 1
+      ./configure ${READLINE_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] readline is already installed"
   fi

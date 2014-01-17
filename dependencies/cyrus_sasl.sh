@@ -1,6 +1,7 @@
 : ${CYRUS_SASL_DEPENDENCIES:=gdbm db openssl zlib}
 : ${CYRUS_SASL_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_PREFIX}"
     --enable-static
     --with-devrandom=/dev/urandom
     --disable-ntlm
