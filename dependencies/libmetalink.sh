@@ -1,4 +1,13 @@
 : ${LIBMETALINK_DEPENDENCIES:=expat libxml2}
+: ${LIBMETALINK_CONFIGURE_OPTIONS:=
+    --prefix="${ROSE_SH_DEPS_PREFIX}"
+    --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --with-libexpat
+    --with-libxml2
+    --with-xml-prefix="$ROSE_SH_DEPS_PREFIX"
+  }
+: ${LIBMETALINK_TARBALL:="libmetalink-0.1.2.tar.gz"}
+: ${LIBMETALINK_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/metalink/metalink.h"}
 
 #-------------------------------------------------------------------------------
 install_libmetalink()
@@ -20,25 +29,19 @@ install_libmetalink()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${ROSE_SH_DEPS_PREFIX}/include/metalink/metalink.h" ]; then
-      mkdir -p "libmetalink"  || exit 1
-      cd "libmetalink/"    || exit 1
+  if [ ! -f "${LIBMETALINK_INSTALLED_FILE}" ]; then
+      rm -rf "./libmetalink"                           || fail "Unable to create application workspace"
+      mkdir -p "libmetalink"                           || fail "Unable to create application workspace"
+      cd "libmetalink/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DEPENDENCIES_DIR}/libmetalink-0.1.2.tar.gz" || exit 1
-      cd "libmetalink-0.1.2/" || exit 1
+      download_tarball "${LIBMETALINK_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBMETALINK_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBMETALINK_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure \
-          --prefix="$ROSE_SH_DEPS_PREFIX" \
-          --libdir="$ROSE_SH_DEPS_LIBDIR" \
-          \
-              --with-libexpat \
-              --with-libxml2 \
-              --with-xml-prefix="${ROSE_SH_DEPS_PREFIX}" \
-          \
-          || exit 1
+      ./configure ${LIBMETALINK_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism} || exit 1
-      make -j${parallelism} install || exit 1
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libmetalink is already installed"
   fi
