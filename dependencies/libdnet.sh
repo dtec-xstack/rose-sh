@@ -4,7 +4,7 @@
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
     --without-python
   }
-: ${LIBDNET_TARBALL:="${DEPENDENCIES_DIR}/libdnet-1.12.tgz"}
+: ${LIBDNET_TARBALL:="libdnet-1.12.tgz"}
 : ${LIBDNET_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/dnet.h"}
 
 #-------------------------------------------------------------------------------
@@ -28,10 +28,12 @@ install_libdnet()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBDNET_INSTALLED_FILE}" ]; then
+      rm -rf "./libdnet"  || fail "Unable to remove old application workspace"
       mkdir -p "libdnet"  || fail "Unable to create application workspace"
       cd "libdnet/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${LIBDNET_TARBALL}"               || fail "Unable to unpack application tarball"
+      download_tarball "${LIBDNET_TARBALL}"    || fail "Unable to download application tarball"
+      tar xzvf "${LIBDNET_TARBALL}"            || fail "Unable to unpack application tarball"
       cd "$(basename ${LIBDNET_TARBALL%.tgz})" || fail "Unable to change into application source directory"
 
       ./configure ${LIBDNET_CONFIGURE_OPTIONS} || fail "Unable to configure application"
