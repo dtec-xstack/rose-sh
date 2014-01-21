@@ -4,7 +4,7 @@
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
     --with-libxml-prefix="${ROSE_SH_DEPS_PREFIX}"
   }
-: ${LIBXSLT_TARBALL:="${DEPENDENCIES_DIR}/libxslt-1.1.28.tar.gz"}
+: ${LIBXSLT_TARBALL:="libxslt-1.1.28.tar.gz"}
 : ${LIBXSLT_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/libxslt/xslt.h"}
 
 #-------------------------------------------------------------------------------
@@ -28,16 +28,18 @@ install_libxslt()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBXSLT_INSTALLED_FILE}" ]; then
-      mkdir -p "libxslt"  || fail "Unable to create application workspace"
-      cd "libxslt/"       || fail "Unable to change into the application workspace"
+      rm -rf "./libxslt"                           || fail "Unable to create application workspace"
+      mkdir -p "libxslt"                           || fail "Unable to create application workspace"
+      cd "libxslt/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${LIBXSLT_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${LIBXSLT_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${LIBXSLT_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBXSLT_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBXSLT_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure ${LIBXSLT_CONFIGURE_OPTIONS} || fail "Unable to configure application"
+      ./configure ${LIBXSLT_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism}         || fail "An error occurred during application compilation"
-      make -j${parallelism} install || fail "An error occurred during application installation"
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libxslt is already installed"
   fi
