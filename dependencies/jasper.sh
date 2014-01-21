@@ -5,7 +5,7 @@
     --enable-shared
     --without-x
   }
-: ${JASPER_TARBALL:="${DEPENDENCIES_DIR}/jasper-1.900.1.tar.gz"}
+: ${JASPER_TARBALL:="jasper-1.900.1.tar.gz"}
 : ${JASPER_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/jasper/jasper.h"}
 
 #-------------------------------------------------------------------------------
@@ -29,9 +29,11 @@ install_jasper()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${JASPER_INSTALLED_FILE}" ]; then
+      rm -rf "./jasper"  || fail "Unable to remove old application workspace"
       mkdir -p "jasper"  || fail "Unable to create application workspace"
       cd "jasper/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${JASPER_TARBALL}"       || fail "Unable to download application tarball"
       tar xzvf "${JASPER_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${JASPER_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
