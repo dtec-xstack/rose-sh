@@ -1,17 +1,13 @@
-# Cannot be built in parallel
-# http://forums.gentoo.org/viewtopic-t-232109-start-0-postdays-0-postorder-asc-highlight-.html?sid=363227bed20da6c794a9a9f62e06727f
-parallelism=1
-
-: ${LIBASSUAN_DEPENDENCIES:=}
-: ${LIBASSUAN_CONFIGURE_OPTIONS:=
+: ${PTH_DEPENDENCIES:=libgpg_error}
+: ${PTH_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${LIBASSUAN_TARBALL:="libassuan-2.1.1.tar.bz2"}
-: ${LIBASSUAN_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/assuan.h"}
+: ${PTH_TARBALL:="pth-2.0.7.tar.gz"}
+: ${PTH_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/pth.h"}
 
 #-------------------------------------------------------------------------------
-install_libassuan()
+install_pth()
 #-------------------------------------------------------------------------------
 {
   info "Installing application"
@@ -23,28 +19,28 @@ install_libassuan()
   #-----------------------------------------------------------------------------
   # Dependencies
   #-----------------------------------------------------------------------------
-  install_deps ${LIBASSUAN_DEPENDENCIES} || exit 1
+  install_deps ${PTH_DEPENDENCIES} || exit 1
 
   #-----------------------------------------------------------------------------
   # Installation
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
-  if [ ! -f "${LIBASSUAN_INSTALLED_FILE}" ]; then
-      rm -rf "./libassuan"                           || fail "Unable to create application workspace"
-      mkdir -p "libassuan"                           || fail "Unable to create application workspace"
-      cd "libassuan/"                                || fail "Unable to change into the application workspace"
+  if [ ! -f "${PTH_INSTALLED_FILE}" ]; then
+      rm -rf "./pth"                           || fail "Unable to create application workspace"
+      mkdir -p "pth"                           || fail "Unable to create application workspace"
+      cd "pth/"                                || fail "Unable to change into the application workspace"
 
-      download_tarball "${LIBASSUAN_TARBALL}"         || fail "Unable to download application tarball"
-      tar xjvf "${LIBASSUAN_TARBALL}"                 || fail "Unable to unpack application tarball"
-      cd "$(basename ${LIBASSUAN_TARBALL%.tar.bz2})"  || fail "Unable to change into application source directory"
+      download_tarball "${PTH_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${PTH_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${PTH_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure ${LIBASSUAN_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
+      ./configure ${PTH_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
       make -j${parallelism}                     || fail "An error occurred during application compilation"
       make -j${parallelism} install             || fail "An error occurred during application installation"
   else
-      info "[SKIP] libassuan is already installed"
+      info "[SKIP] pth is already installed"
   fi
   #-----------------------------------------------------------------------------
   set +x

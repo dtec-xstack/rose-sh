@@ -1,4 +1,4 @@
-: ${GNUPG_DEPENDENCIES:=zlib}
+: ${GNUPG_DEPENDENCIES:=zlib libassuan pth}
 : ${GNUPG_CONFIGURE_OPTIONS:=
     --disable-doc
     --disable-selinux-support
