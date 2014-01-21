@@ -5,7 +5,7 @@
     --with-libpcap-includes="${ROSE_SH_DEPS_PREFIX}/include"
     --with-libpcap-libraries="${ROSE_SH_DEPS_PREFIX}/lib"
   }
-: ${DAQ_TARBALL:="${DEPENDENCIES_DIR}/daq-2.0.1.tar.gz"}
+: ${DAQ_TARBALL:="daq-2.0.1.tar.gz"}
 : ${DAQ_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/daq.h"}
 
 #-------------------------------------------------------------------------------
@@ -29,9 +29,11 @@ install_daq()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${DAQ_INSTALLED_FILE}" ]; then
+      rm -rf "./daq"  || fail "Unable to remove old application workspace"
       mkdir -p "daq"  || fail "Unable to create application workspace"
       cd "daq/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${DAQ_TARBALL}"       || fail "Unable to download application tarball"
       tar xzvf "${DAQ_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${DAQ_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
