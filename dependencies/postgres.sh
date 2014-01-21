@@ -8,7 +8,7 @@
     --with-libxml
     --with-libxslt
   }
-: ${POSTGRES_TARBALL:="${DEPENDENCIES_DIR}/postgresql-9.2.4.tar.bz2"}
+: ${POSTGRES_TARBALL:="postgresql-9.2.4.tar.bz2"}
 : ${POSTGRES_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/postgresql/server/postgres.h"}
 
 #-------------------------------------------------------------------------------
@@ -32,11 +32,13 @@ install_postgres()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${POSTGRES_INSTALLED_FILE}" ]; then
+      rm -rf "./postgres"  || fail "Unable to remove old application workspace"
       mkdir -p "postgres"  || fail "Unable to create application workspace"
       cd "postgres/"       || fail "Unable to change into the application workspace"
 
-      tar xjvf "${POSTGRES_TARBALL}"                    || fail "Unable to unpack application tarball"
-      cd "$(basename ${POSTGRES_TARBALL%.tar.bz2})"     || fail "Unable to change into application source directory"
+      download_tarball "${POSTGRES_TARBALL}"        || fail "Unable to download application tarball"
+      tar xjvf "${POSTGRES_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${POSTGRES_TARBALL%.tar.bz2})" || fail "Unable to change into application source directory"
 
       LDFLAGS="$LDFLAGS"    \
       CPPFLAGS="$CPPFLAGS"  \
