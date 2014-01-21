@@ -9,8 +9,7 @@
     --with-libunistring-prefix="${ROSE_SH_DEPS_PREFIX}"
     --with-included-libcroco
     --with-included-glib}
-: ${GETTEXT_TARBALL:="${DEPENDENCIES_DIR}/gettext-0.18.3.1.tar.gz"}
-: ${GETTEXT_SOURCE_DIRNAME:="gettext-0.18.3.1"}
+: ${GETTEXT_TARBALL:="gettext-0.18.3.1.tar.gz"}
 : ${GETTEXT_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/gettext-po.h"}
 
 #-------------------------------------------------------------------------------
@@ -37,8 +36,9 @@ install_gettext()
       mkdir -p "gettext"  || fail "Unable to create application workspace"
       cd "gettext/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${GETTEXT_TARBALL}"   || fail "Unable to unpack application tarball"
-      cd "${GETTEXT_SOURCE_DIRNAME}"  || fail "Unable to change into application source directory"
+      download_tarball "${GETTEXT_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${GETTEXT_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${GETTEXT_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       ./configure ${GETTEXT_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 
