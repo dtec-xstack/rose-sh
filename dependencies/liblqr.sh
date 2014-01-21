@@ -4,7 +4,7 @@
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
     --enable-static
   }
-: ${LIBLQR_TARBALL:="${DEPENDENCIES_DIR}/liblqr-1-0.4.2.tar.bz2"}
+: ${LIBLQR_TARBALL:="liblqr-1-0.4.2.tar.bz2"}
 : ${LIBLQR_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/lqr-1/lqr.h"}
 
 #-------------------------------------------------------------------------------
@@ -28,9 +28,11 @@ install_liblqr()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBLQR_INSTALLED_FILE}" ]; then
+      rm -rf "./liblqr"  || fail "Unable to remove old application workspace"
       mkdir -p "liblqr"  || fail "Unable to create application workspace"
       cd "liblqr/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${LIBLQR_TARBALL}"        || fail "Unable to download application tarball"
       tar xjvf "${LIBLQR_TARBALL}"                || fail "Unable to unpack application tarball"
       cd "$(basename ${LIBLQR_TARBALL%.tar.bz2})" || fail "Unable to change into application source directory"
 
