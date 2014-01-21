@@ -1,5 +1,5 @@
-: ${CLAWS_DEPENDENCIES:=zlib libetpan}
-: ${CLAWS_CONFIGURE_OPTIONS:=
+: ${CLAWS_MAIL_DEPENDENCIES:=zlib libetpan}
+: ${CLAWS_MAIL_CONFIGURE_OPTIONS:=
     --disable-networkmanager
     --disable-jpilot
     --disable-startup-notification
@@ -35,7 +35,7 @@ download_claws_mail()
 install_deps_claws_mail()
 #-------------------------------------------------------------------------------
 {
-  install_deps ${CLAWS_DEPENDENCIES} || fail "Could not install dependencies"
+  install_deps ${CLAWS_MAIL_DEPENDENCIES} || fail "Could not install dependencies"
 }
 
 #-------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ configure_claws_mail__rose()
       CC="${ROSE_CC}" \
           ./configure \
               --prefix="$(pwd)/install_tree"  \
-              ${CLAWS_CONFIGURE_OPTIONS}      \
+              ${CLAWS_MAIL_CONFIGURE_OPTIONS}      \
               || exit 1
   #-----------------------------------------------------------------------------
   set +x
@@ -76,7 +76,7 @@ configure_claws_mail__gcc()
       CC="${CC}" \
           ./configure \
               --prefix="$(pwd)/install_tree"  \
-              ${CLAWS_CONFIGURE_OPTIONS}      \
+              ${CLAWS_MAIL_CONFIGURE_OPTIONS}      \
               || exit 1
   #-----------------------------------------------------------------------------
   set +x
