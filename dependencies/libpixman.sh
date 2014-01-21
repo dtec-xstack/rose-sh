@@ -4,7 +4,7 @@
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
     --enable-libpng
   }
-: ${LIBPIXMAN_TARBALL:="${DEPENDENCIES_DIR}/pixman-0.30.2.tar.gz"}
+: ${LIBPIXMAN_TARBALL:="pixman-0.30.2.tar.gz"}
 : ${LIBPIXMAN_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/pixman.h"}
 
 #-------------------------------------------------------------------------------
@@ -28,9 +28,11 @@ install_libpixman()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBPIXMAN_INSTALLED_FILE}" ]; then
+      rm -rf "./libpixman"  || fail "Unable to remove old application workspace"
       mkdir -p "libpixman"  || fail "Unable to create application workspace"
       cd "libpixman/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${LIBPIXMAN_TARBALL}"       || fail "Unable to download application tarball"
       tar xzvf "${LIBPIXMAN_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${LIBPIXMAN_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
