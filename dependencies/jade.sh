@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${JADE_TARBALL:="${DEPENDENCIES_DIR}/jade-5.1.72.tar.gz"}
+: ${JADE_TARBALL:="jade-5.1.72.tar.gz"}
 : ${JADE_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/jade/jade.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,9 +27,11 @@ install_jade()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${JADE_INSTALLED_FILE}" ]; then
+      rm -rf "./jade"  || fail "Unable to remove old application workspace"
       mkdir -p "jade"  || fail "Unable to create application workspace"
       cd "jade/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${JADE_TARBALL}"        || fail "Unable to download application tarball"
       tar xzvf "${JADE_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${JADE_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
