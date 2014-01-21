@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${XCB_PROTO_TARBALL:="${DEPENDENCIES_DIR}/xcb-proto-1.8.tar.gz"}
+: ${XCB_PROTO_TARBALL:="xcb-proto-1.8.tar.gz"}
 : ${XCB_PROTO_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/xcb/xcb.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,9 +27,11 @@ install_xcb_proto()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${XCB_PROTO_INSTALLED_FILE}" ]; then
+      rm -rf "./xcb_proto"  || fail "Unable to remove old application workspace"
       mkdir -p "xcb_proto"  || fail "Unable to create application workspace"
       cd "xcb_proto/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${XCB_PROTO_TARBALL}"       || fail "Unable to download application tarball"
       tar xzvf "${XCB_PROTO_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${XCB_PROTO_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
