@@ -1,5 +1,29 @@
 : ${APACHE2_DEPENDENCIES:=zlib openssl pcre libxml2 apr apr_util}
 
+# Array required for proper variable expansion. Specifically, to
+# maintain quotations.
+APACHE2_DEFAULT_CONFIGURE_OPTIONS=(
+    --with-port=8888
+    --with-sslport=8887
+    --with-program-name=apache2
+    --enable-so
+    --disable-suexec
+    --disable-lua
+    --disable-luajit
+    --enable-auth-digest
+    --enable-basic-digest
+    --with-ssl=\"${ROSE_SH_DEPS_PREFIX}\"
+    --with-libxml2=\"${ROSE_SH_DEPS_PREFIX}\"
+    --with-z=\"${ROSE_SH_DEPS_PREFIX}\"
+    --with-pcre=\"${ROSE_SH_DEPS_PREFIX}\"
+    --with-apr=\"${ROSE_SH_DEPS_PREFIX}\"
+    --with-apr-util=\"${ROSE_SH_DEPS_PREFIX}\"
+    --enable-pie
+    --enable-mpms-shared=all
+    --enable-mods-shared=\"all cgi\"
+    --enable-mods-static=\"unixd logio watchdog version\")
+: ${APACHE2_CONFIGURE_OPTIONS:=${APACHE2_DEFAULT_CONFIGURE_OPTIONS[@]}}
+
 #-------------------------------------------------------------------------------
 download_apache2()
 #-------------------------------------------------------------------------------
@@ -39,32 +63,12 @@ configure_apache2__rose()
       CC="${ROSE_CC}" \
       \
           CPPFLAGS="$SS_CPPFLAGS" \
-          CFLAGS="$SS_CFLAGS" \
-          LDFLAGS="$SS_LDFLAGS" \
+          CFLAGS="$SS_CFLAGS"     \
+          LDFLAGS="$SS_LDFLAGS"   \
       \
           ./configure \
-              --prefix="$(pwd)/install_tree" \
-              \
-                  --with-port=8888 \
-                  --with-sslport=8887 \
-                  --with-program-name=apache2 \
-                  --enable-so \
-                  --disable-suexec \
-                  --disable-lua \
-                  --disable-luajit \
-                  --enable-auth-digest \
-                  --enable-basic-digest \
-                  --with-ssl="${ROSE_SH_DEPS_PREFIX}" \
-                  --with-libxml2="${ROSE_SH_DEPS_PREFIX}" \
-                  --with-z="${ROSE_SH_DEPS_PREFIX}" \
-                  --with-pcre="${ROSE_SH_DEPS_PREFIX}" \
-                  --with-apr="${ROSE_SH_DEPS_PREFIX}" \
-                  --with-apr-util="${ROSE_SH_DEPS_PREFIX}" \
-                  --enable-pie \
-                  --enable-mpms-shared=all \
-                  --enable-mods-shared="all cgi" \
-                  --enable-mods-static="unixd logio watchdog version" \
-              \
+              --prefix="$(pwd)/install_tree"    \
+              "${APACHE2_CONFIGURE_OPTIONS[@]}" \
               || exit 1
 
   set +x
@@ -78,10 +82,15 @@ configure_apache2__gcc()
 
   set -x
       CC="${CC}" \
+      \
+          CPPFLAGS="$SS_CPPFLAGS" \
+          CFLAGS="$SS_CFLAGS"     \
+          LDFLAGS="$SS_LDFLAGS"   \
+      \
           ./configure \
-              --prefix="$(pwd)/install_tree" \
-              --with-apr="${APR_HOME}" \
-              --with-apr-util="${APR_UTIL_HOME}" || exit 1
+              --prefix="$(pwd)/install_tree"    \
+              "${APACHE2_CONFIGURE_OPTIONS[@]}" \
+              || exit 1
   set +x
 }
 
