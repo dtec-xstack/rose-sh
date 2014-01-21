@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${LIBPNG_TARBALL:="${DEPENDENCIES_DIR}/libpng-1.6.6.tar.gz"}
+: ${LIBPNG_TARBALL:="libpng-1.6.6.tar.gz"}
 : ${LIBPNG_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/libpng16/png.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,16 +27,18 @@ install_libpng()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBPNG_INSTALLED_FILE}" ]; then
-      mkdir -p "libpng"  || fail "Unable to create application workspace"
-      cd "libpng/"       || fail "Unable to change into the application workspace"
+      rm -rf "./libpng"                           || fail "Unable to create application workspace"
+      mkdir -p "libpng"                           || fail "Unable to create application workspace"
+      cd "libpng/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${LIBPNG_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${LIBPNG_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${LIBPNG_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBPNG_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBPNG_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure ${LIBPNG_CONFIGURE_OPTIONS} || fail "Unable to configure application"
+      ./configure ${LIBPNG_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism}         || fail "An error occurred during application compilation"
-      make -j${parallelism} install || fail "An error occurred during application installation"
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libpng is already installed"
   fi
