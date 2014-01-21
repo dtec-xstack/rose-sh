@@ -6,7 +6,7 @@
     --with-apr="${ROSE_SH_DEPS_PREFIX}/bin/apr-1-config"
     --with-apr-util="${ROSE_SH_DEPS_PREFIX}/bin/apu-1-config"
   }
-: ${SERF_TARBALL:="${DEPENDENCIES_DIR}/serf-1.2.1.tar.bz2"}
+: ${SERF_TARBALL:="serf-1.2.1.tar.bz2"}
 : ${SERF_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/serf-1/serf.h"}
 
 #-------------------------------------------------------------------------------
@@ -30,9 +30,11 @@ install_serf()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${SERF_INSTALLED_FILE}" ]; then
+      rm -rf "./serf"  || fail "Unable to remove old application workspace"
       mkdir -p "serf"  || fail "Unable to create application workspace"
       cd "serf/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${SERF_TARBALL}"        || fail "Unable to download application tarball"
       tar xjvf "${SERF_TARBALL}"                || fail "Unable to unpack application tarball"
       cd "$(basename ${SERF_TARBALL%.tar.bz2})" || fail "Unable to change into application source directory"
 
