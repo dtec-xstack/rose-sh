@@ -1,11 +1,11 @@
 : ${GMP_DEPENDENCIES:=}
 : ${GMP_CONFIGURE_OPTIONS:=
-    ABI=64
+    ABI="$(if [[ "x$(uname -m)" == "xi*86" ]]; then echo 32; else echo 64; fi)"
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${GMP_TARBALL:="${DEPENDENCIES_DIR}/gmp-5.1.2.tar.bz2"}
+: ${GMP_TARBALL:="gmp-5.1.2.tar.bz2"}
 : ${GMP_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/gmp.h"}
 
 #-------------------------------------------------------------------------------
@@ -29,9 +29,11 @@ install_gmp()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${GMP_INSTALLED_FILE}" ]; then
+      rm -rf "./gmp"  || fail "Unable to remove old application workspace"
       mkdir -p "gmp"  || fail "Unable to create application workspace"
       cd "gmp/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${GMP_TARBALL}"         || fail "Unable to download application tarball"
       tar xjvf "${GMP_TARBALL}"                 || fail "Unable to unpack application tarball"
       cd "$(basename ${GMP_TARBALL%.tar.bz2})"  || fail "Unable to change into application source directory"
 
