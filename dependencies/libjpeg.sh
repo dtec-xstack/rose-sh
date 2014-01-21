@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${LIBJPEG_TARBALL:="${DEPENDENCIES_DIR}/jpegsrc.v8d.tar.gz"}
+: ${LIBJPEG_TARBALL:="jpegsrc.v8d.tar.gz"}
 : ${LIBJPEG_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/jpeglib.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,16 +27,18 @@ install_libjpeg()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBJPEG_INSTALLED_FILE}" ]; then
-      mkdir -p "libjpeg"  || fail "Unable to create application workspace"
-      cd "libjpeg/"       || fail "Unable to change into the application workspace"
+      rm -rf "./libjpeg"                           || fail "Unable to create application workspace"
+      mkdir -p "libjpeg"                           || fail "Unable to create application workspace"
+      cd "libjpeg/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${LIBJPEG_TARBALL}"   || fail "Unable to unpack application tarball"
-      cd "jpeg-8d/"                   || fail "Unable to change into application source directory"
+      download_tarball "${LIBJPEG_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBJPEG_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "jpeg-8d/"                                || fail "Unable to change into application source directory"
 
-      ./configure ${LIBJPEG_CONFIGURE_OPTIONS} || fail "Unable to configure application"
+      ./configure ${LIBJPEG_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism}         || fail "An error occurred during application compilation"
-      make -j${parallelism} install || fail "An error occurred during application installation"
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] libjpeg is already installed"
   fi
