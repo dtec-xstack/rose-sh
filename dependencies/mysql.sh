@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${MYSQL_TARBALL:="${DEPENDENCIES_DIR}/mysql-5.1.72.tar.gz"}
+: ${MYSQL_TARBALL:="mysql-5.1.72.tar.gz"}
 : ${MYSQL_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/mysql/mysql.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,16 +27,18 @@ install_mysql()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${MYSQL_INSTALLED_FILE}" ]; then
-      mkdir -p "mysql"  || fail "Unable to create application workspace"
-      cd "mysql/"       || fail "Unable to change into the application workspace"
+      rm -rf "./mysql"                           || fail "Unable to create application workspace"
+      mkdir -p "mysql"                           || fail "Unable to create application workspace"
+      cd "mysql/"                                || fail "Unable to change into the application workspace"
 
-      tar xzvf "${MYSQL_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${MYSQL_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${MYSQL_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${MYSQL_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${MYSQL_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
-      ./configure ${MYSQL_CONFIGURE_OPTIONS} || fail "Unable to configure application"
+      ./configure ${MYSQL_CONFIGURE_OPTIONS}     || fail "Unable to configure application"
 
-      make -j${parallelism}         || fail "An error occurred during application compilation"
-      make -j${parallelism} install || fail "An error occurred during application installation"
+      make -j${parallelism}                     || fail "An error occurred during application compilation"
+      make -j${parallelism} install             || fail "An error occurred during application installation"
   else
       info "[SKIP] mysql is already installed"
   fi
