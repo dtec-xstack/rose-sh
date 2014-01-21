@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${DOCBOOK_UTILS_TARBALL:="${DEPENDENCIES_DIR}/docbook-utils-0.6.14.tar.gz"}
+: ${DOCBOOK_UTILS_TARBALL:="docbook-utils-0.6.14.tar.gz"}
 : ${DOCBOOK_UTILS_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/docbook_utils.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,11 +27,13 @@ install_docbook_utils()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${DOCBOOK_UTILS_INSTALLED_FILE}" ]; then
+      rm -rf "./docbook_utils"  || fail "Unable to remove old application workspace"
       mkdir -p "docbook_utils"  || fail "Unable to create application workspace"
       cd "docbook_utils/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${DOCBOOK_UTILS_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${DOCBOOK_UTILS_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${DOCBOOK_UTILS_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${DOCBOOK_UTILS_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${DOCBOOK_UTILS_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       ./configure ${DOCBOOK_UTILS_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 
