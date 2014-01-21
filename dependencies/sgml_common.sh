@@ -6,7 +6,7 @@
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
     --sysconfdir="${ROSE_SH_DEPS_PREFIX}/etc"
   }
-: ${SGML_COMMON_TARBALL:="${DEPENDENCIES_DIR}/sgml-common-0.6.3.tgz"}
+: ${SGML_COMMON_TARBALL:="sgml-common-0.6.3.tgz"}
 : ${SGML_COMMON_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/sgml_common/sgml_common.h"}
 
 #-------------------------------------------------------------------------------
@@ -30,9 +30,11 @@ install_sgml_common()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${SGML_COMMON_INSTALLED_FILE}" ]; then
+      rm -rf "./sgml_common"  || fail "Unable to remove old application workspace"
       mkdir -p "sgml_common"  || fail "Unable to create application workspace"
       cd "sgml_common/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${SGML_COMMON_TARBALL}"     || fail "Unable to download application tarball"
       tar xzvf "${SGML_COMMON_TARBALL}"             || fail "Unable to unpack application tarball"
       cd "$(basename ${SGML_COMMON_TARBALL%.tgz})"  || fail "Unable to change into application source directory"
 
