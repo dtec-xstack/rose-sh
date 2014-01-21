@@ -8,7 +8,7 @@
     --with-libjpeg
     --with-libtiff
   }
-: ${GDK_PIXBUF_TARBALL:="${DEPENDENCIES_DIR}/gdk-pixbuf-2.30.0.tar.xz"}
+: ${GDK_PIXBUF_TARBALL:="gdk-pixbuf-2.30.0.tar.xz"}
 : ${GDK_PIXBUF_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf.h"}
 
 #-------------------------------------------------------------------------------
@@ -32,9 +32,11 @@ install_gdk_pixbuf()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${GDK_PIXBUF_INSTALLED_FILE}" ]; then
+      rm -rf "./gdk_pixbuf"  || fail "Unable to remove old application workspace"
       mkdir -p "gdk_pixbuf"  || fail "Unable to create application workspace"
       cd "gdk_pixbuf/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${GDK_PIXBUF_TARBALL}"        || fail "Unable to download application tarball"
       unxz "${GDK_PIXBUF_TARBALL}"                    || fail "Unable to unpack application tarball"
       tar xvf "${GDK_PIXBUF_TARBALL%.xz}"             || fail "Unable to unpack application tarball"
       cd "$(basename ${GDK_PIXBUF_TARBALL%.tar.xz})"  || fail "Unable to change into application source directory"
