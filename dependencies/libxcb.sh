@@ -6,7 +6,7 @@
     --enable-xinput
     --enable-xkb
   }
-: ${LIBXCB_TARBALL:="${DEPENDENCIES_DIR}/libxcb-1.9.1.tar.bz2"}
+: ${LIBXCB_TARBALL:="libxcb-1.9.1.tar.bz2"}
 : ${LIBXCB_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/lib/libxcb.a"}
 
 #-------------------------------------------------------------------------------
@@ -30,9 +30,11 @@ install_libxcb()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBXCB_INSTALLED_FILE}" ]; then
+      rm -rf "./libxcb"  || fail "Unable to remove old application workspace"
       mkdir -p "libxcb"  || fail "Unable to create application workspace"
       cd "libxcb/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${LIBXCB_TARBALL}"        || fail "Unable to download application tarball"
       tar xjvf "${LIBXCB_TARBALL}"                || fail "Unable to unpack application tarball"
       cd "$(basename ${LIBXCB_TARBALL%.tar.bz2})" || fail "Unable to change into application source directory"
 
