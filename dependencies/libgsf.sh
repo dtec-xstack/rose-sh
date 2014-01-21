@@ -6,7 +6,7 @@
     --with-bz2
     --with-gdk-pixbuf
   }
-: ${LIBGSF_TARBALL:="${DEPENDENCIES_DIR}/libgsf-1.14.28.tar.xz"}
+: ${LIBGSF_TARBALL:="libgsf-1.14.28.tar.xz"}
 : ${LIBGSF_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/libgsf-1/gsf/gsf.h"}
 
 #-------------------------------------------------------------------------------
@@ -30,9 +30,11 @@ install_libgsf()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBGSF_INSTALLED_FILE}" ]; then
+      rm -rf "./libgsf"  || fail "Unable to remove old application workspace"
       mkdir -p "libgsf"  || fail "Unable to create application workspace"
       cd "libgsf/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${LIBGSF_TARBALL}"        || fail "Unable to download application tarball"
       unxz "${LIBGSF_TARBALL}"                    || fail "Unable to unpack application tarball"
       tar xvf "${LIBGSF_TARBALL%.xz}"             || fail "Unable to unpack application tarball"
       cd "$(basename ${LIBGSF_TARBALL%.tar.xz})"  || fail "Unable to change into application source directory"
