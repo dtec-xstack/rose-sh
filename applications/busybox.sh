@@ -7,10 +7,7 @@ download_busybox()
   info "Downloading source code"
 
   set -x
-      git clone \
-          "rose-dev@rosecompiler1.llnl.gov:rose/c/${application}.git" \
-          "${application}-src" \
-          || exit 1
+      clone_repository "${application}" "${application}-src" || exit 1
       cd "${application}-src/" || exit 1
   set +x
 }

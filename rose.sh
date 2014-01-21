@@ -12,6 +12,10 @@ set -e
 : ${application_workspace:="${workspace}/${application}"}
 : ${application_log:="${application_workspace}/output.txt-$$"}
 #-------------------------------------------------------------------------------
+: ${REPOSITORY_MIRROR_URLS:=
+  https://bitbucket.org/rose-compiler
+  rose-dev@rosecompiler1.llnl.gov:rose/c
+  }
 : ${TARBALL_MIRROR_URLS:=
   https://bitbucket.org/rose-compiler/rose-sh/downloads
   http://portal.nersc.gov/project/dtec/tarballs/dependencies
@@ -81,6 +85,30 @@ install_deps() # $*=dependencies
 #-------------------------------------------------------------------------------
 info() { printf "[INFO] $*\n" ; return 0 ; }
 fail() { printf "\n[FATAL] $*\n" 1>&2 ; exit 1 ; }
+
+clone_repository()
+{
+  local repository_name="$1" local_clone_name="$2"
+  : ${local_clone_name:="${repository_name}-src"}
+
+  [ -z "${repository_name}" ] && fail "Usage: clone_repository <repository_name>"
+
+  for mirror_url in ${REPOSITORY_MIRROR_URLS}; do
+    local repository_url="${mirror_url}/${repository_name}.git"
+
+    info "Attempting to git-clone: '${repository_url}'"
+
+    git clone --progress "${repository_url}" "${local_clone_name}" >&1
+    if test $? -eq 0; then
+        return 0
+    else
+        info "Could not clone '${repository_name}' from mirror '${mirror_url}'"
+        continue
+    fi
+  done
+
+  fail "Unable to clone '${repository_name}'"
+}
 
 download_tarball()
 {
