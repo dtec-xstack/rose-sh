@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${FONTCONFIG_TARBALL:="${DEPENDENCIES_DIR}/fontconfig-2.10.95.tar.gz"}
+: ${FONTCONFIG_TARBALL:="fontconfig-2.10.95.tar.gz"}
 : ${FONTCONFIG_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/fontconfig.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,11 +27,13 @@ install_fontconfig()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${FONTCONFIG_INSTALLED_FILE}" ]; then
+      rm -rf "./fontconfig"  || fail "Unable to remove old application workspace"
       mkdir -p "fontconfig"  || fail "Unable to create application workspace"
       cd "fontconfig/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${FONTCONFIG_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${FONTCONFIG_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${FONTCONFIG_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${FONTCONFIG_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${FONTCONFIG_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       ./configure ${FONTCONFIG_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 
