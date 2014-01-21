@@ -9,7 +9,7 @@
     --disable-gtktest
     --disable-gsf
   }
-: ${LIBEXTRACTOR_TARBALL:="${DEPENDENCIES_DIR}/libextractor-1.1.tar.gz"}
+: ${LIBEXTRACTOR_TARBALL:="libextractor-1.1.tar.gz"}
 : ${LIBEXTRACTOR_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/extractor.h"}
 
 #-------------------------------------------------------------------------------
@@ -33,11 +33,13 @@ install_libextractor()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBEXTRACTOR_INSTALLED_FILE}" ]; then
+      rm -rf "./libextractor"  || fail "Unable to remove old application workspace"
       mkdir -p "libextractor"  || fail "Unable to create application workspace"
       cd "libextractor/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${LIBEXTRACTOR_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${LIBEXTRACTOR_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${LIBEXTRACTOR_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LIBEXTRACTOR_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LIBEXTRACTOR_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       LDFLAGS="$LDFLAGS"    \
       CPPFLAGS="$CPPFLAGS"  \
