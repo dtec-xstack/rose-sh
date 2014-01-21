@@ -1,4 +1,5 @@
 : ${BUSYBOX_DEPENDENCIES:=}
+: ${BUSYBOX_CONFIGURE_OPTIONS=}
 
 #-------------------------------------------------------------------------------
 download_busybox()
