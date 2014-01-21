@@ -11,7 +11,7 @@
     --with-expat
     --with-zlib
   }
-: ${NEON_TARBALL:="${DEPENDENCIES_DIR}/neon-0.30.0.tar.gz"}
+: ${NEON_TARBALL:="neon-0.30.0.tar.gz"}
 : ${NEON_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/neon.h"}
 
 #-------------------------------------------------------------------------------
@@ -35,9 +35,11 @@ install_neon()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${NEON_INSTALLED_FILE}" ]; then
+      rm -rf "./neon"  || fail "Unable to remove old application workspace"
       mkdir -p "neon"  || fail "Unable to create application workspace"
       cd "neon/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${NEON_TARBALL}"       || fail "Unable to download application tarball"
       tar xzvf "${NEON_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${NEON_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
