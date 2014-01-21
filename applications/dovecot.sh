@@ -1,5 +1,28 @@
 : ${DOVECOT_DEPENDENCIES:=zlib openldap}
 
+# Array required for proper variable expansion. Specifically, to
+# maintain quotations.
+DOVECOT_CONFIGURE_OPTIONS_DEFAULT=(
+    --with-notify=none
+    --without-nss
+    --with-shadow
+    --without-pam
+    --without-bsdauth
+    --without-gssapi
+    --with-ldap=yes
+    --with-sqlite
+    --without-pgsql
+    --without-mysql
+    --without-lucene
+    --without-stemmer
+    --without-solr
+    --with-zlib
+    --with-bzlib
+    --without-libcap
+    --with-ssl=openssl
+    --without-libwrap)
+: ${DOVECOT_CONFIGURE_OPTIONS:=${DOVECOT_CONFIGURE_OPTIONS_DEFAULT[@]}}
+
 #-------------------------------------------------------------------------------
 download_dovecot()
 #-------------------------------------------------------------------------------
@@ -40,28 +63,9 @@ configure_dovecot__rose()
       LDFLAGS="$LDFLAGS" \
           CC="${ROSE_CC}" \
               ./configure \
-                  --prefix="$(pwd)/install_tree" \
-                  \
-                      --with-notify=none \
-                      --without-nss \
-                      --with-shadow \
-                      --without-pam \
-                      --without-bsdauth \
-                      --without-gssapi \
-                      --with-ldap=yes \
-                      --with-sqlite \
-                      --without-pgsql \
-                      --without-mysql \
-                      --without-lucene \
-                      --without-stemmer \
-                      --without-solr \
-                      --with-zlib \
-                      --with-bzlib \
-                      --without-libcap \
-                      --with-ssl=openssl \
-                      --without-libwrap \
-                      --with-ssldir="$(pwd)/install/ssl" \
-                  \
+                  --prefix="$(pwd)/install_tree"      \
+                  --with-ssldir="$(pwd)/install/ssl"  \
+                  "${DOVECOT_CONFIGURE_OPTIONS[@]}"   \
                   || exit 1
   #-----------------------------------------------------------------------------
   set +x
@@ -82,28 +86,9 @@ configure_dovecot__gcc()
       LDFLAGS="$LDFLAGS" \
           CC="${CC}" \
               ./configure \
-                  --prefix="$(pwd)/install_tree" \
-                  \
-                      --with-notify=none \
-                      --without-nss \
-                      --with-shadow \
-                      --without-pam \
-                      --without-bsdauth \
-                      --without-gssapi \
-                      --with-ldap=yes \
-                      --with-sqlite \
-                      --without-pgsql \
-                      --without-mysql \
-                      --without-lucene \
-                      --without-stemmer \
-                      --without-solr \
-                      --with-zlib \
-                      --with-bzlib \
-                      --without-libcap \
-                      --with-ssl=openssl \
-                      --without-libwrap \
-                      --with-ssldir="$(pwd)/install/ssl" \
-                  \
+                  --prefix="$(pwd)/install_tree"      \
+                  --with-ssldir="$(pwd)/install/ssl"  \
+                  "${DOVECOT_CONFIGURE_OPTIONS[@]}"   \
                   || exit 1
   #-----------------------------------------------------------------------------
   set +x
