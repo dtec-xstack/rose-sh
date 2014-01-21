@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${ATK_TARBALL:="${DEPENDENCIES_DIR}/atk-2.10.0.tar.xz"}
+: ${ATK_TARBALL:="atk-2.10.0.tar.xz"}
 : ${ATK_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/atk-1.0/atk/atk.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,9 +27,11 @@ install_atk()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${ATK_INSTALLED_FILE}" ]; then
+      rm -rf "./atk"  || fail "Unable to remove old application workspace"
       mkdir -p "atk"  || fail "Unable to create application workspace"
       cd "atk/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${ATK_TARBALL}"        || fail "Unable to download application tarball"
       unxz "${ATK_TARBALL}"                   || fail "Unable to unpack application tarball"
       tar xvf "${ATK_TARBALL%.xz}"            || fail "Unable to unpack application tarball"
       cd "$(basename ${ATK_TARBALL%.tar.xz})" || fail "Unable to change into application source directory"
