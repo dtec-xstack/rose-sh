@@ -3,7 +3,7 @@
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${FREETYPE_TARBALL:="${DEPENDENCIES_DIR}/freetype-2.5.0.tar.gz"}
+: ${FREETYPE_TARBALL:="freetype-2.5.0.tar.gz"}
 : ${FREETYPE_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/freetype2/freetype/freetype.h"}
 
 #-------------------------------------------------------------------------------
@@ -27,11 +27,13 @@ install_freetype()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${FREETYPE_INSTALLED_FILE}" ]; then
+      rm -rf "./freetype"  || fail "Unable to remove old application workspace"
       mkdir -p "freetype"  || fail "Unable to create application workspace"
       cd "freetype/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${FREETYPE_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${FREETYPE_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${FREETYPE_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${FREETYPE_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${FREETYPE_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       ./configure ${FREETYPE_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 
