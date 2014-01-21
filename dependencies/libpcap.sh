@@ -4,7 +4,7 @@
     --exec-prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
   }
-: ${LIBPCAP_TARBALL:="${DEPENDENCIES_DIR}/libpcap-1.4.0.tar.gz"}
+: ${LIBPCAP_TARBALL:="libpcap-1.4.0.tar.gz"}
 : ${LIBPCAP_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/pcap.h"}
 
 #-------------------------------------------------------------------------------
@@ -28,9 +28,11 @@ install_libpcap()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LIBPCAP_INSTALLED_FILE}" ]; then
+      rm -rf "./libpcap"  || fail "Unable to remove old application workspace"
       mkdir -p "libpcap"  || fail "Unable to create application workspace"
       cd "libpcap/"       || fail "Unable to change into the application workspace"
 
+      download_tarball "${LIBPCAP_TARBALL}"       || fail "Unable to download application tarball"
       tar xzvf "${LIBPCAP_TARBALL}"               || fail "Unable to unpack application tarball"
       cd "$(basename ${LIBPCAP_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
 
