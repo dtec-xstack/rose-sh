@@ -6,7 +6,7 @@
     --with-jpeg
     --with-tiff
   }
-: ${LCMS_TARBALL:="${DEPENDENCIES_DIR}/lcms2-2.5.tar.gz"}
+: ${LCMS_TARBALL:="lcms2-2.5.tar.gz"}
 : ${LCMS_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/lcms2.h"}
 
 #-------------------------------------------------------------------------------
@@ -30,11 +30,13 @@ install_lcms()
   set -x
   #-----------------------------------------------------------------------------
   if [ ! -f "${LCMS_INSTALLED_FILE}" ]; then
+      rm -rf "./lcms"  || fail "Unable to create application workspace"
       mkdir -p "lcms"  || fail "Unable to create application workspace"
       cd "lcms/"       || fail "Unable to change into the application workspace"
 
-      tar xzvf "${LCMS_TARBALL}"               || fail "Unable to unpack application tarball"
-      cd "$(basename ${LCMS_TARBALL%.tar.gz})" || fail "Unable to change into application source directory"
+      download_tarball "${LCMS_TARBALL}"        || fail "Unable to download application tarball"
+      tar xzvf "${LCMS_TARBALL}"                || fail "Unable to unpack application tarball"
+      cd "$(basename ${LCMS_TARBALL%.tar.gz})"  || fail "Unable to change into application source directory"
 
       ./configure ${LCMS_CONFIGURE_OPTIONS} || fail "Unable to configure application"
 
