@@ -7,7 +7,7 @@
     --sysconfdir="${ROSE_SH_DEPS_PREFIX}/etc"
   }
 : ${SGML_COMMON_TARBALL:="sgml-common-0.6.3.tgz"}
-: ${SGML_COMMON_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/sgml_common/sgml_common.h"}
+: ${SGML_COMMON_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/share/sgml/xml.dcl"}
 
 #-------------------------------------------------------------------------------
 install_sgml_common()
