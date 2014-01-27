@@ -43,7 +43,6 @@ export PKG_CONFIG_PATH="${ROSE_SH_DEPS_PREFIX}/lib:${ROSE_SH_DEPS_PREFIX}/lib/pk
 export PATH="${ROSE_SH_DEPS_PREFIX}/bin:${ROSE_SH_DEPS_PREFIX}/sbin:${PATH}"
 export PATH="${ROSE_SH_HOME}/opt:${PATH}"
 export LD_LIBRARY_PATH="${ROSE_SH_DEPS_PREFIX}/lib:${ROSE_SH_DEPS_PREFIX}/lib64:${LD_LIBRARY_PATH}"
-export CLASSPATH="${ROSE_SH_DEPS_PREFIX}/lib:${CLASSPATH}"
 
 #-------------------------------------------------------------------------------
 rosesh__install_dep_setup()
