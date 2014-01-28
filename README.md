@@ -6,6 +6,12 @@ A testing harness to compile applications from out in the wild with the ROSE com
 Usage
 =====
 
+See the `--help` information:
+
+```bash
+$ ./rose.sh --help
+```
+
 Here is an example commandline to test the Apache2 application:
 
 ```bash

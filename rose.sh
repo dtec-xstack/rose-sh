@@ -27,6 +27,7 @@ export ROSE_SH_HOME="$(cd "$(dirname "$0")" && pwd)"
 
 export APPLICATIONS_DIR="${ROSE_SH_HOME}/applications"
 export APPLICATION_SCRIPT="${APPLICATIONS_DIR}/${application}.sh"
+export APPLICATIONS_LIST="$(ls ${APPLICATIONS_DIR}/*.sh | sed 's/\.sh//' | xargs -I{} basename {} | sort)"
 
 #-------------------------------------------------------------------------------
 # Dependencies
@@ -143,6 +144,49 @@ for dependency in $DEPENDENCIES_LIST; do
 done
 
 #-------------------------------------------------------------------------------
+usage()
+#-------------------------------------------------------------------------------
+{
+  cat <<-EOF
+--------------------------------------------------------------------------------
+Help Information
+--------------------------------------------------------------------------------
+
+  Usage:
+
+      $ ./rose.sh <application> [--help]
+
+  Description
+
+      Compiles <application> after installing any dependencies.
+
+      A new directory "./workspace/<application>" will be created
+      to be used as the application's workspace.
+
+      Dependencies are installed to a new directory:
+      "./dependencies/installation"
+
+  Example:
+
+      $ ./rose.sh apache_cassandra
+
+  Environment Variables:
+
+    ROSE_CC     The ROSE compiler used during Stage 1 of testing
+                (Use for C/C++/Java)
+
+    CC          The C compiler used during Stage 2 of testing (default: gcc)
+    JAVAC       The Java compiler used during Stage 2 of testing (default: javac)
+
+  Applications:
+
+    $(echo ${APPLICATIONS_LIST} | xargs)
+
+--------------------------------------------------------------------------------
+EOF
+}
+
+#-------------------------------------------------------------------------------
 phase_1()
 #-------------------------------------------------------------------------------
 {
@@ -232,10 +276,17 @@ mkdir -p "${application_workspace}" || fail "main::create_workspace failed"
 pushd "${application_workspace}"    || fail "main::cd_into_workspace failed"
 
 #-------------------------------------------------------------------------------
+# Usage
+#-------------------------------------------------------------------------------
+if [ -z "$1" -o "x$1" = "xhelp" -o "x$1" = "x-h" -o "x$1" = "x-help" -o "x$1" = "x--help" ]; then
+    usage
+    exit 0
+fi
+
+#-------------------------------------------------------------------------------
 # Entry point for program execution
 #-------------------------------------------------------------------------------
 (
-
     if [ "x$1" = "xinstall-deps" ]; then
       shift
       install_deps $* || fail "Could not install deps '$*'"
