@@ -1,7 +1,5 @@
 : ${OPENFIRE_DEPENDENCIES:=apache_ant ss_ant_rose}
 : ${OPENFIRE_CONFIGURE_OPTIONS:=
-    -verbose
-    -buildfile build/build.xml
     -Dcom.pontetec.rosecompiler.use_single_commandline="true"
   }
 
@@ -45,9 +43,11 @@ configure_openfire__rose()
       KG__REPORT_PASS="$(pwd)/rose-passes.txt" \
         /usr/bin/time --format='%E' \
             ant compile \
+                -verbose \
                 -lib "${ROSE_SH_DEPS_PREFIX}/lib" \
                 -Dbuild.compiler="com.pontetec.RoseCompilerAdapter" \
                 -Dcom.pontetec.rosecompiler.translator="${ROSE_CC}" \
+                -buildfile build/build.xml \
                 ${OPENFIRE_CONFIGURE_OPTIONS} \
         || fail "An error occurred during application compilation"
   #-----------------------------------------------------------------------------
