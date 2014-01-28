@@ -6,6 +6,7 @@ set -e
 #-------------------------------------------------------------------------------
 : ${ROSE_CC:="identityTranslator"}
 : ${CC:="gcc"}
+: ${JAVAC:="javac"}
 : ${workspace:="$(pwd)/workspace"}
 : ${parallelism:=1}
 : ${application:=$1}
