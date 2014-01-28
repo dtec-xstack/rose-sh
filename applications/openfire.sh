@@ -2,6 +2,7 @@
 : ${OPENFIRE_CONFIGURE_OPTIONS:=
     -Dcom.pontetec.rosecompiler.use_single_commandline="true"
   }
+: ${OPENFIRE_ANT_TARGET:=compile}
 
 #-------------------------------------------------------------------------------
 download_openfire()
@@ -42,7 +43,7 @@ configure_openfire__rose()
       KG__REPORT_FAIL="$(pwd)/rose-fails.txt" \
       KG__REPORT_PASS="$(pwd)/rose-passes.txt" \
         /usr/bin/time --format='%E' \
-            ant compile \
+            ant "${OPENFIRE_ANT_TARGET}" \
                 -verbose \
                 -lib "${ROSE_SH_DEPS_PREFIX}/lib" \
                 -Dbuild.compiler="com.pontetec.RoseCompilerAdapter" \
@@ -65,7 +66,7 @@ configure_openfire__gcc()
   set -x
   #-----------------------------------------------------------------------------
     /usr/bin/time --format='%E' \
-        ant compile \
+        ant "${OPENFIRE_ANT_TARGET}" \
             ${OPENFIRE_CONFIGURE_OPTIONS} \
     || fail "An error occurred during application compilation"
   #-----------------------------------------------------------------------------
