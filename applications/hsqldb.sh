@@ -67,6 +67,7 @@ configure_hsqldb__gcc()
   #-----------------------------------------------------------------------------
     /usr/bin/time --format='%E' \
         ant "${HSQLDB_ANT_TARGET}" \
+            -buildfile build/build.xml \
             ${HSQLDB_CONFIGURE_OPTIONS} \
     || fail "An error occurred during application compilation"
   #-----------------------------------------------------------------------------

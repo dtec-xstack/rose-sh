@@ -67,6 +67,7 @@ configure_openfire__gcc()
   #-----------------------------------------------------------------------------
     /usr/bin/time --format='%E' \
         ant "${OPENFIRE_ANT_TARGET}" \
+            -buildfile build/build.xml \
             ${OPENFIRE_CONFIGURE_OPTIONS} \
     || fail "An error occurred during application compilation"
   #-----------------------------------------------------------------------------
