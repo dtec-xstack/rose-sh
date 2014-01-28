@@ -5,7 +5,7 @@
     --enable-libpng
   }
 : ${LIBPIXMAN_TARBALL:="pixman-0.30.2.tar.gz"}
-: ${LIBPIXMAN_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/pixman.h"}
+: ${LIBPIXMAN_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/pixman-1/pixman.h"}
 
 #-------------------------------------------------------------------------------
 install_libpixman()

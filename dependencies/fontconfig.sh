@@ -1,10 +1,14 @@
-: ${FONTCONFIG_DEPENDENCIES:=zlib freetype expat docbook_utils}
+# TODO: Pontetec options
+#: ${FONTCONFIG_DEPENDENCIES:=zlib freetype expat docbook_utils}
+: ${FONTCONFIG_DEPENDENCIES:=zlib freetype expat}
+# TODO: Disabling docsdir which requires docbook2pdf
 : ${FONTCONFIG_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"
+    --disable-docs
   }
 : ${FONTCONFIG_TARBALL:="fontconfig-2.10.95.tar.gz"}
-: ${FONTCONFIG_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/fontconfig.h"}
+: ${FONTCONFIG_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/include/fontconfig/fontconfig.h"}
 
 #-------------------------------------------------------------------------------
 install_fontconfig()

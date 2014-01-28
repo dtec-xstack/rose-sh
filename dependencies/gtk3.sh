@@ -1,4 +1,5 @@
-: ${GTK3_DEPENDENCIES:=glib atk pango cairo cairo_gobject gdk_pixbuf}
+#: ${GTK3_DEPENDENCIES:=glib atk pango cairo cairo_gobject gdk_pixbuf}
+: ${GTK3_DEPENDENCIES:=glib atk pango cairo gdk_pixbuf}
 : ${GTK3_CONFIGURE_OPTIONS:=
     --prefix="${ROSE_SH_DEPS_PREFIX}"
     --libdir="${ROSE_SH_DEPS_LIBDIR}"

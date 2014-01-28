@@ -17,6 +17,21 @@
     geoip_database
   }
 : ${WIRESHARK_CONFIGURE_OPTIONS:=
+    --enable-wireshark
+    --with-gtk3=yes
+    --without-lua
+    --without-qt
+    --with-gcrypt
+    --with-gnutls
+    --with-libsmi
+    --with-pcap
+    --with-zlib
+    --without-portaudio
+    --without-libcap
+    --without-krb5
+    --with-cres
+    --with-adns
+    --with-geoip
   }
 
 #-------------------------------------------------------------------------------
@@ -54,10 +69,12 @@ configure_wireshark__rose()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
+      ./autogen.sh || fail "An error occurred during autotools bootstrapping"
+
       CC="${ROSE_CC}" \
-      CPPFLAGS="$CPPFLAGS" \
-      CFLAGS="$CFLAGS"  \
-      LDFLAGS="$LDFLAGS"  \
+#      CPPFLAGS="$CPPFLAGS" \
+#      CFLAGS="$CFLAGS"  \
+#      LDFLAGS="$LDFLAGS"  \
           ./configure \
               --prefix="$(pwd)/install_tree" \
               ${WIRESHARK_CONFIGURE_OPTIONS} || fail "An error occurred during application configuration"
@@ -75,10 +92,12 @@ configure_wireshark__gcc()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
+      ./autogen.sh || fail "An error occurred during autotools bootstrapping"
+
       CC="${CC}" \
-      CPPFLAGS="$CPPFLAGS" \
-      CFLAGS="$CFLAGS"  \
-      LDFLAGS="$LDFLAGS"  \
+#      CPPFLAGS="$CPPFLAGS" \
+#      CFLAGS="$CFLAGS"  \
+#      LDFLAGS="$LDFLAGS"  \
           ./configure \
               --prefix="$(pwd)/install_tree" \
               ${WIRESHARK_CONFIGURE_OPTIONS} || fail "An error occurred during application configuration"
