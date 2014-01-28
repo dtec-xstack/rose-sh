@@ -50,6 +50,10 @@ configure_coffeemud__rose()
                 -Dcom.pontetec.rosecompiler.translator="${ROSE_CC}" \
                 ${COFFEEMUD_CONFIGURE_OPTIONS} \
         || fail "An error occurred during application compilation"
+
+      JAVAC="${ROSE_CC}" \
+      JAVAC_FLAGS="-verbose -rose:java:classpath \".:./lib/js.jar:./lib/jzlib.jar\"" \
+          make all -j${parallelism} || fail "An error occurred during application compilation"
   #-----------------------------------------------------------------------------
   set +x
   #-----------------------------------------------------------------------------
@@ -59,7 +63,7 @@ configure_coffeemud__rose()
 configure_coffeemud__gcc()
 #-------------------------------------------------------------------------------
 {
-  info "Configuring application for default compiler='${CC}'"
+  info "Configuring application for default compiler='${JAVAC}'"
 
   #-----------------------------------------------------------------------------
   set -x
@@ -68,6 +72,9 @@ configure_coffeemud__gcc()
         ant "${COFFEEMUD_ANT_TARGET}" \
             ${COFFEEMUD_CONFIGURE_OPTIONS} \
     || fail "An error occurred during application compilation"
+
+    JAVAC="${JAVAC}" \
+        make all -j${parallelism} || fail "An error occurred during application compilation"
   #-----------------------------------------------------------------------------
   set +x
   #-----------------------------------------------------------------------------
