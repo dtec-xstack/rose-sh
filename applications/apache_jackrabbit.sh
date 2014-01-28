@@ -39,6 +39,8 @@ configure_apache_jackrabbit__rose()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
+      mvn ant:ant || fail "Failed to convert Maven build to Ant build using 'mvn ant:ant'"
+
       KG__STRIP_PATH="$(pwd)/" \
       KG__REPORT_FAIL="$(pwd)/rose-fails.txt" \
       KG__REPORT_PASS="$(pwd)/rose-passes.txt" \
@@ -64,6 +66,8 @@ configure_apache_jackrabbit__gcc()
   #-----------------------------------------------------------------------------
   set -x
   #-----------------------------------------------------------------------------
+    mvn ant:ant || fail "Failed to convert Maven build to Ant build using 'mvn ant:ant'"
+
     /usr/bin/time --format='%E' \
         ant "${APACHE_JACKRABBIT_ANT_TARGET}" \
             ${APACHE_JACKRABBIT_CONFIGURE_OPTIONS} \
