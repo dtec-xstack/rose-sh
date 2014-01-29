@@ -43,7 +43,7 @@ configure_apache_maven__rose()
       KG__STRIP_PATH="$(pwd)/" \
       KG__REPORT_FAIL="$(pwd)/rose-fails.txt" \
       KG__REPORT_PASS="$(pwd)/rose-passes.txt" \
-      M2_HOME="$(pwd)" \
+      M2_HOME="$(pwd)/m2_home" \
         /usr/bin/time --format='%E' \
             ant "${APACHE_MAVEN_ANT_TARGET}" \
                 -verbose \
