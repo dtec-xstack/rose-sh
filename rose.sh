@@ -18,8 +18,8 @@ set -e
   rose-dev@rosecompiler1.llnl.gov:rose/c
   }
 : ${TARBALL_MIRROR_URLS:=
-  https://bitbucket.org/rose-compiler/rose-sh/downloads
   http://portal.nersc.gov/project/dtec/tarballs/dependencies
+  https://bitbucket.org/rose-compiler/rose-sh/downloads
   }
 #-------------------------------------------------------------------------------
 
