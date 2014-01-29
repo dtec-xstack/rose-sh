@@ -1,4 +1,5 @@
-: ${APACHE_ANT_DEPENDENCIES:=}
+# TOO1 (1/29/2014): Interferes with applications/apache_ant.sh
+#: ${APACHE_ANT_DEPENDENCIES:=}
 : ${APACHE_ANT_TARBALL:="apache-ant-1.9.3-bin.tar.gz"}
 : ${APACHE_ANT_INSTALLED_FILE:="${ROSE_SH_DEPS_PREFIX}/bin/ant"}
 
@@ -15,7 +16,8 @@ install_apache_ant()
   #-----------------------------------------------------------------------------
   # Dependencies
   #-----------------------------------------------------------------------------
-  install_deps ${APACHE_ANT_DEPENDENCIES} || exit 1
+# TOO1 (1/29/2014): Interferes with applications/apache_ant.sh
+#  install_deps ${APACHE_ANT_DEPENDENCIES} || exit 1
 
   #-----------------------------------------------------------------------------
   # Installation
