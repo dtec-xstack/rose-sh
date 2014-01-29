@@ -4,7 +4,7 @@ set -e
 #-------------------------------------------------------------------------------
 # Set defaults
 #-------------------------------------------------------------------------------
-: ${ROSE_CC:="identityTranslator"}
+: ${ROSE_CC:="$(which identityTranslator)"}
 : ${CC:="gcc"}
 : ${JAVAC:="javac"}
 : ${workspace:="$(pwd)/workspace"}
