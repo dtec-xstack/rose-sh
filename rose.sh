@@ -139,7 +139,7 @@ download_tarball()
 # Source dependencies install functions
 #-------------------------------------------------------------------------------
 for dependency in $DEPENDENCIES_LIST; do
-    info "Sourcing dependency script '${dependency}'"
+    #info "Sourcing dependency script '${dependency}'"
     source "${dependency}" || exit 1
 done
 
