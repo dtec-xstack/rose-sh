@@ -1,6 +1,7 @@
 : ${APACHE_JACKRABBIT_DEPENDENCIES:=apache_ant ss_ant_rose}
 : ${APACHE_JACKRABBIT_CONFIGURE_OPTIONS:=
     -Dcom.pontetec.rosecompiler.use_single_commandline="true"
+    -Dcom.pontetec.rosecompiler.translator.arg.rose.skip_commentsAndDirectives=""
   }
 : ${APACHE_JACKRABBIT_ANT_TARGET:=compile}
 

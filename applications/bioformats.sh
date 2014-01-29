@@ -1,6 +1,7 @@
 : ${BIOFORMATS_DEPENDENCIES:=apache_ant ss_ant_rose}
 : ${BIOFORMATS_CONFIGURE_OPTIONS:=
     -Dcom.pontetec.rosecompiler.use_single_commandline="true"
+    -Dcom.pontetec.rosecompiler.translator.arg.rose.skip_commentsAndDirectives=""
   }
 : ${BIOFORMATS_ANT_TARGET:=compile}
 

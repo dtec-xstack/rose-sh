@@ -1,6 +1,7 @@
 : ${APACHE_CASSANDRA_DEPENDENCIES:=apache_ant ss_ant_rose}
 : ${APACHE_CASSANDRA_CONFIGURE_OPTIONS:=
     -Dcom.pontetec.rosecompiler.use_single_commandline="true"
+    -Dcom.pontetec.rosecompiler.translator.arg.rose.skip_commentsAndDirectives=""
   }
 : ${APACHE_CASSANDRA_ANT_TARGET:=build}
 

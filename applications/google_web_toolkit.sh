@@ -1,6 +1,7 @@
 : ${GOOGLE_WEB_TOOLKIT_DEPENDENCIES:=apache_ant ss_ant_rose svn}
 : ${GOOGLE_WEB_TOOLKIT_CONFIGURE_OPTIONS:=
     -Dcom.pontetec.rosecompiler.use_single_commandline="true"
+    -Dcom.pontetec.rosecompiler.translator.arg.rose.skip_commentsAndDirectives=""
   }
 : ${GOOGLE_WEB_TOOLKIT_ANT_TARGET:=build}
 
