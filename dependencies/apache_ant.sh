@@ -31,6 +31,9 @@ install_apache_ant()
       tar xzvf "${APACHE_ANT_TARBALL}"                    || fail "Unable to unpack application tarball"
       cd "$(basename ${APACHE_ANT_TARBALL%-bin.tar.gz})"  || fail "Unable to change into application source directory"
 
+      mkdir -p "${ROSE_SH_DEPS_PREFIX}/bin" || fail "Unable to create ${ROSE_SH_DEPS_PREFIX}/bin"
+      mkdir -p "${ROSE_SH_DEPS_PREFIX}/etc" || fail "Unable to create ${ROSE_SH_DEPS_PREFIX}/etc"
+      mkdir -p "${ROSE_SH_DEPS_PREFIX}/lib" || fail "Unable to create ${ROSE_SH_DEPS_PREFIX}/lib"
 
       cp -r bin/* "${ROSE_SH_DEPS_PREFIX}/bin" || fail "Unable to install application binaries"
       cp -r etc/* "${ROSE_SH_DEPS_PREFIX}/etc" || fail "Unable to install application etc files"
