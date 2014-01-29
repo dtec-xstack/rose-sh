@@ -18,6 +18,7 @@ set -e
   rose-dev@rosecompiler1.llnl.gov:rose/c
   }
 : ${TARBALL_MIRROR_URLS:=
+  http://hudson-rose-30:8080/userContent/tarballs/dependencies
   https://rosecompiler1.llnl.gov:8443/jenkins-edg4x/userContent/tarballs/dependencies
   http://portal.nersc.gov/project/dtec/tarballs/dependencies
   https://bitbucket.org/rose-compiler/rose-sh/downloads
