@@ -168,12 +168,12 @@ Help Information
 
   Example:
 
-      $ ./rose.sh apache_cassandra
+      $ ROSE_CC="\$(which identityTranslator)" ./rose.sh apache_cassandra
 
   Environment Variables:
 
-    ROSE_CC     The ROSE compiler used during Stage 1 of testing
-                (Use for C/C++/Java)
+    ROSE_CC     The ROSE compiler used during Stage 1 of testing; must be
+                absolute path to compiler. (Use for C/C++/Java.)
 
     CC          The C compiler used during Stage 2 of testing (default: gcc)
     JAVAC       The Java compiler used during Stage 2 of testing (default: javac)
