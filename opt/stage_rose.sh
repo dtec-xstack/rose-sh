@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #DEFAULT ARGUMENTS
 SRC_IGNORED_FILES=( )
