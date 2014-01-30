@@ -48,6 +48,9 @@ export PATH="${ROSE_SH_DEPS_PREFIX}/bin:${ROSE_SH_DEPS_PREFIX}/sbin:${PATH}"
 export PATH="${ROSE_SH_HOME}/opt:${PATH}"
 export LD_LIBRARY_PATH="${ROSE_SH_DEPS_PREFIX}/lib:${ROSE_SH_DEPS_PREFIX}/lib64:${LD_LIBRARY_PATH}"
 
+# TOO1 (1/30/2014): TODO: Fix Java make install-core job and then remove this:
+source /nfs/casc/overture/ROSE/opt/rhel5/x86_64/java/jdk/latest/setup.sh || true
+
 #-------------------------------------------------------------------------------
 rosesh__install_dep_setup()
 #-------------------------------------------------------------------------------
